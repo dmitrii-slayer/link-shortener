@@ -1,0 +1,27 @@
+name: Build & Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Установка JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run Maven commands
+        run: mvn clean install -U -ntp
+
+      - name: Проверка code style с помощью spotless
+        run: mvn spotless:check
