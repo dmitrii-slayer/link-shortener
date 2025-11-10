@@ -65,7 +65,7 @@ curl -X DELETE localhost:8080/api/links/my-short-link/user/test_user
 
 ## Чтобы проверить работоспобность ссылки нужно в браузере ввести полученную короткую ссылку:
 http://localhost:8080/my-short-link
-где my-short-link нужно подставить сгенерированную короткую ссылку
+где вместо my-short-link нужно подставить сгенерированную короткую ссылку
 
 ```shell
 curl -I localhost:8080/my-short-link
