@@ -46,7 +46,7 @@ public class LinkService {
 
         Instant expiresAt = Instant.now().plus(ttlValue, ttlChronoUnit);
 
-        int clickLimit = customClickLimit != null ? customClickLimit: defaultClickLimit;
+        int clickLimit = customClickLimit != null ? customClickLimit : defaultClickLimit;
 
         ShortLink newLink = new ShortLink(
                 shortUrl,
