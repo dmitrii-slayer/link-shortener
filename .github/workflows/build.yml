@@ -5,7 +5,7 @@ on:
     branches:
       - master
   pull_request:
-    types: [opened, synchronize]
+    types: [ opened, synchronize ]
 
 jobs:
   build-and-release:
@@ -42,7 +42,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-        # .original а не просто .jar для демонстрации чтобы не занимать место uber jar-ом (~60 МБ)
+          # .original а не просто .jar для демонстрации чтобы не занимать место uber jar-ом (~60 МБ)
           files: |
             target/*.jar.original
         env:
