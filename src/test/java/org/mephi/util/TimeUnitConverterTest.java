@@ -13,9 +13,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class TimeUnitConverterTest {
 
     @CsvSource({
-            "'hours', HOURS",
-            "'minutes', MINUTES",
-            "'seconds', SECONDS"
+            "hours, HOURS",
+            "minutes, MINUTES",
+            "seconds, SECONDS"
     })
     @ParameterizedTest
     void shouldReturnChronoUnit(String input, ChronoUnit expected) {

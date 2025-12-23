@@ -1,4 +1,4 @@
-name: Build & Test
+name: Build, Test & Release
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  build-and-test:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,8 +20,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Run Maven commands
-        run: mvn clean install -U -ntp
+      - name: Сборка и тесты
+        run: mvn clean package -U -ntp
 
-      - name: Проверка code style с помощью spotless
+      - name: Проверка code style
         run: mvn spotless:check
+
+      - name: Создание GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+        # .original а не просто .jar для демонстрации чтобы не занимать место uber jar-ом (~60 МБ)
+          files: |
+            target/*.jar.original
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
