@@ -1,0 +1,64 @@
+name: Build, Test & Release
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*'
+  pull_request:
+    types: [ opened, synchronize ]
+
+permissions:
+  contents: write
+
+jobs:
+  # джоба для тестирования на разных ОС
+  build-multi-os:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Установка JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Сборка и тесты на ${{ matrix.os }}
+        run: mvn clean verify -U -ntp
+
+      - name: Проверка code style
+        run: mvn spotless:check
+
+  # отдельная джоба для создания релиза (запускается только для тегов)
+  create-release:
+    needs: test-multi-os  # ждем успешного завершения тестов на всех ОС
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Установка JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Сборка для релиза
+        run: mvn clean package -U -ntp -DskipTests
+
+      - name: Создание GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # для демонстрации использую .original а не просто .jar чтобы не занимать место uber jar-ом (~60 МБ)
+          files: |
+            target/*.jar.original
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
