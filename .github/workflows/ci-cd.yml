@@ -38,7 +38,7 @@ jobs:
 
   # отдельная джоба для создания релиза (запускается только для тегов)
   create-release:
-    needs: test-multi-os  # ждем успешного завершения тестов на всех ОС
+    needs: build-multi-os  # ждем успешного завершения тестов на всех ОС
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
