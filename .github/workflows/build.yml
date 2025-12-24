@@ -22,26 +22,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-#      - name: Сборка и тесты
-#        run: mvn clean package -U -ntp -DskipTests
-#
-#      - name: Проверка code style
-#        run: mvn spotless:check
+      - name: Сборка и тесты
+        run: mvn clean package -U -ntp
 
-      - name: Проверка tags
-        if: startsWith(github.ref, 'refs/tags/')
-        run: echo "Running only for tags starting with v."
-#        run: mvn -v
-#
-      - name: Не tags v
-        if: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
-#        if: !startsWith(github.ref, 'refs/tags/v')
-        run: echo "Running only if not v..."
-
-      - name: Не tags вообще
-        if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
-#        if: !startsWith(github.ref, 'refs/tags/')
-        run: echo "Running only if not a tag."
+      - name: Проверка code style
+        run: mvn spotless:check
 
       - name: Создание GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
