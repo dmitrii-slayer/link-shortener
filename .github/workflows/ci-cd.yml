@@ -103,8 +103,7 @@ jobs:
       - name: Run Dependency Check
         run: |
           mvn org.owasp:dependency-check-maven:check \
-            -Dformat=HTML \
-            -Dformat=JSON \
+            -Dformat=HTML,JSON
             -DfailBuildOnCVSS=8 \
             -DfailOnError=false \
             -DautoUpdate=true
