@@ -29,7 +29,9 @@ public interface LinkApi {
     ResponseEntity<CommonApiResponse<LinkResponse>> createShortLink(@Valid @RequestBody CreateLinkRequest request);
 
     @Operation(summary = "Получение всех ссылок пользователя",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON_VALUE))})
+            responses = {
+                    @ApiResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON_VALUE))
+            })
     @GetMapping("/user/{username}")
     ResponseEntity<CommonApiResponse<List<LinkResponse>>> getUserLinks(@PathVariable("username") String username);
 
