@@ -30,8 +30,17 @@ jobs:
       - name: Cache NVD database for Dependency-Check
         uses: actions/cache@v3
         with:
-          path: ~/.dependency-check/data
+          path: ~/.m2/repository/org/owasp/dependency-check-data
           key: nvd-database
+
+      - name: NVD location check
+        run: |
+          echo "Checking NVD storage location..."
+          if [ -d ~/.m2/repository/org/owasp ]; then
+            echo "Found org/owasp directory"
+            echo "Subdirectories:"
+            ls ~/.m2/repository/org/owasp/
+          fi
 
       - name: Generate SBOM
         run: |

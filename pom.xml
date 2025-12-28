@@ -114,6 +114,27 @@
                     <outputName>bom</outputName>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>12.1.8</version>
+                <configuration>
+                    <format>HTML</format>
+                    <format>JSON</format>
+                    <failBuildOnCVSS>8</failBuildOnCVSS>
+                    <failOnError>false</failOnError>
+
+                    <autoUpdate>true</autoUpdate>
+
+<!--                    <cveValidForHours>24</cveValidForHours>-->
+                    <connectionTimeout>20000</connectionTimeout>
+
+                    <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                    <nodeAuditAnalyzerEnabled>false</nodeAuditAnalyzerEnabled>
+                    <retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
