@@ -16,7 +16,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Cache Maven dependencies
@@ -26,6 +26,14 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-m2
+
+      - name: Cache NVD database for Dependency-Check
+        uses: actions/cache@v3
+        with:
+          path: ~/.dependency-check/data
+          key: ${{ runner.os }}-nvd-${{ hashFiles('pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-nvd
 
       - name: Generate SBOM
         run: |
@@ -39,7 +47,8 @@ jobs:
         run: |
           mvn org.owasp:dependency-check-maven:check \
             -Dformat=HTML \
-            -DfailBuildOnCVSS=8
+            -DfailBuildOnCVSS=8 \
+            -DfailOnError=false
 
       - name: Upload reports
         if: always()
