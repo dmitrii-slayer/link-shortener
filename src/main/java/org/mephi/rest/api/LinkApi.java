@@ -22,12 +22,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public interface LinkApi {
 
     @Operation(summary = "Создание короткой ссылки",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON_VALUE))})
+            responses = {
+                    @ApiResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON_VALUE))
+            })
     @PostMapping
     ResponseEntity<CommonApiResponse<LinkResponse>> createShortLink(@Valid @RequestBody CreateLinkRequest request);
 
     @Operation(summary = "Получение всех ссылок пользователя",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON_VALUE))})
+            responses = {
+                    @ApiResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON_VALUE))
+            })
     @GetMapping("/user/{username}")
     ResponseEntity<CommonApiResponse<List<LinkResponse>>> getUserLinks(@PathVariable("username") String username);
 
