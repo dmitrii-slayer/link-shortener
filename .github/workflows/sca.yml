@@ -19,27 +19,31 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v3
+      - name: Restore Maven cache
+        id: restore-maven-cache
+        uses: actions/cache/restore@v4
         with:
-          path: ~/.m2
+          path: ~/.m2/repository
           key: maven-${{ hashFiles('pom.xml') }}
           restore-keys: |
             maven-
 
-      - name: Cache NVD database for Dependency-Check
-        uses: actions/cache@v3
+      - name: Restore OWASP NVD cache
+        id: restore-owasp-cache
+        uses: actions/cache/restore@v4
         with:
           path: ~/.m2/repository/org/owasp/dependency-check-data
-          key: nvd-database
+          key: owasp-nvd
 
-      - name: NVD location check
+      - name: NVD location check 1
         run: |
-          echo "Checking NVD storage location..."
+          echo "Checking NVD location..."
           if [ -d ~/.m2/repository/org/owasp ]; then
-            echo "Found org/owasp directory"
+            echo "Contents of org/owasp:"
+            ls -la ~/.m2/repository/org/owasp/
+            echo ""
             echo "Subdirectories:"
-            ls ~/.m2/repository/org/owasp/
+            find ~/.m2/repository/org/owasp -maxdepth 4 -type d | sort
           fi
 
       - name: Generate SBOM
@@ -54,9 +58,37 @@ jobs:
         run: |
           mvn org.owasp:dependency-check-maven:check \
             -Dformat=HTML \
+            -Dformat=JSON \
             -DfailBuildOnCVSS=8 \
             -DfailOnError=false \
             -DautoUpdate=true
+
+      - name: Save Maven cache
+        id: save-maven-cache
+        if: always() && steps.restore-maven-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.restore-maven-cache.outputs.cache-primary-key }}
+          path: ~/.m2/repository
+
+      - name: Save OWASP NVD cache
+        id: save-owasp-cache
+        if: always() && steps.restore-owasp-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.restore-owasp-cache.outputs.cache-primary-key }}
+          path: ~/.m2/repository/org/owasp
+
+      - name: NVD location check 2
+        run: |
+          echo "Checking NVD location..."
+          if [ -d ~/.m2/repository/org/owasp ]; then
+            echo "Contents of org/owasp:"
+            ls -la ~/.m2/repository/org/owasp/
+            echo ""
+            echo "Subdirectories:"
+            find ~/.m2/repository/org/owasp -maxdepth 4 -type d | sort
+          fi
 
       - name: Upload reports
         if: always()
@@ -66,4 +98,5 @@ jobs:
           path: |
             target/bom.json
             target/dependency-check-report.html
+            target/dependency-check-report.json
           retention-days: 7
