@@ -23,17 +23,15 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          key: maven-${{ hashFiles('pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-m2
+            maven-
 
       - name: Cache NVD database for Dependency-Check
         uses: actions/cache@v3
         with:
           path: ~/.dependency-check/data
-          key: ${{ runner.os }}-nvd-${{ hashFiles('pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-nvd
+          key: nvd-database
 
       - name: Generate SBOM
         run: |
@@ -48,7 +46,8 @@ jobs:
           mvn org.owasp:dependency-check-maven:check \
             -Dformat=HTML \
             -DfailBuildOnCVSS=8 \
-            -DfailOnError=false
+            -DfailOnError=false \
+            -DautoUpdate=true
 
       - name: Upload reports
         if: always()
